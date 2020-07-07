@@ -10,7 +10,7 @@
 #define VERBS_LEN 138
 #define VERB_FORM_LEN 3
 
-const char *VALID_VERB_FORMS_NAMES[] = {"base", "past simple", "past particple"};
+const char *VALID_VERB_FORMS_NAMES[] = {"base", "past simple", "past participle"};
 
 Verb *verb_load_verbs(const char *filename) {
     FILE *stream; 
