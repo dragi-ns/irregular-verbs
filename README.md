@@ -18,5 +18,5 @@ make
 ```
 ./ir-verbs base "past simple"
 ./ir-verbs base "past participle"
-./ir-verbs "past particple" base "past simple"
+./ir-verbs "past participle" base "past simple"
 ```

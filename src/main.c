@@ -9,6 +9,8 @@
 #include "util.h"
 #include "color.h"
 
+#define MIN_ARGUMENTS_LEN 3
+#define VERB_FORM_LEN 3
 #define USER_ANSWER_LEN 20
 
 typedef struct {
@@ -98,7 +100,7 @@ int main(int argc, char *argv[]) {
 }
 
 static void validate_command_line_arguments(int argc, char *argv[], Mode *mode) {
-    if (argc < 3) {
+    if (argc < MIN_ARGUMENTS_LEN) {
         fprintf(stderr, "Too few arguments!\n\n");
         goto INVALID;
     }
@@ -111,7 +113,7 @@ static void validate_command_line_arguments(int argc, char *argv[], Mode *mode) 
      * 
      * Extra command line arguments (if any) are ignored.
      */
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i <= MIN_ARGUMENTS_LEN; i++) {
         if (i == argc) {
             break;
         }
@@ -152,15 +154,7 @@ static bool check_for_duplicate_form_name(const char *form_name) {
      * throughout the program.
      */
     static int count = 0;
-    static const char *seen[3] = {0};
-
-    // TODO: I should have probably handle this better.
-    /*
-     * We run this function max three times throughout the program.
-     * So, the 'count' should never be grather than or euqal to three at this point.
-     * 
-     */
-    assert(count < 3);
+    static const char *seen[VERB_FORM_LEN] = {0};
 
     for (int i = 0; i < count; i++) {
         if (strcmp(form_name, seen[i]) == 0) {
@@ -168,7 +162,9 @@ static bool check_for_duplicate_form_name(const char *form_name) {
         }
     }
 
-    seen[count++] = form_name;
+    if (count < VERB_FORM_LEN) {
+        seen[count++] = form_name;
+    }
 
     return false;
 }
@@ -180,7 +176,7 @@ static void print_instruction(void) {
     printf("Examples:\n");
     printf("\tir-verbs base \"past simple\"\n");
     printf("\tir-verbs base \"past participle\"\n");
-    printf("\tir-verbs \"past particple\" base \"past simple\"\n");
+    printf("\tir-verbs \"past participle\" base \"past simple\"\n");
 }
 
 static void print_chosen_mode(const Mode *mode) {
@@ -202,13 +198,17 @@ static void print_chosen_mode(const Mode *mode) {
 }
 
 static void start_interrogation(const Mode *mode) {
-    Verb *verbs;
-    const Verb *random_verb;
+    Verb *verbs = NULL;
+    const Verb *random_verb = NULL;
     char user_answer[USER_ANSWER_LEN] = {0};
     int correct_count = 0, question_count = 0;
     bool correct_1 = false, correct_2 = false;
 
     verbs = verb_load_verbs("data/verbs.csv");
+    if (verbs == NULL) {
+        fprintf(stderr, "Error loading verbs.\n");
+        return;
+    }
 
     for (;;) {
         random_verb = verb_get_random(verbs);
@@ -250,7 +250,7 @@ static void start_interrogation(const Mode *mode) {
 }
 
 static bool wants_exit(const char *user_answer, int exit_code) {
-    int num;
+    int num = 0;
 
     if (sscanf(user_answer, "%d", &num) == 1) {
         if (num == exit_code) {
