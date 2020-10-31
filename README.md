@@ -1,6 +1,10 @@
 # irregular-verbs
 An interrogation program for irregular verbs.
 
+## Demo/Screenshot
+
+![Demo of the game](demo.png)
+
 ## Installation
 
 ```bash
